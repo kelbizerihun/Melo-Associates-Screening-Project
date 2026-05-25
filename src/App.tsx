@@ -305,12 +305,16 @@ export default function App() {
           {/* NAV */}
           <nav className="custom-nav select-none">
             <a href="#" className="nav-logo" onClick={(e) => { e.preventDefault(); setView("landing"); }}>
-              <span className="nav-logo-mark">
-                <svg viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+              <span className="nav-logo-mark" style={{ background: 'none', border: 'none', width: 'auto', height: 'auto', display: 'flex', alignItems: 'center' }}>
+                <svg viewBox="0 0 100 100" style={{ width: '32px', height: '32px' }} fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="42" cy="42" r="28" stroke="#9a547a" strokeWidth="8" strokeLinecap="round" />
+                  <circle cx="68" cy="68" r="18" stroke="#e27a54" strokeWidth="8" strokeLinecap="round" />
                 </svg>
               </span>
-              <span className="nav-logo-text">InterviewIQ</span>
+              <span className="nav-logo-text flex flex-col items-start leading-tight">
+                <span className="text-sm font-serif font-bold tracking-wider text-[#1e293b]" style={{ fontFamily: "serif" }}>MELO</span>
+                <span className="text-[7px] font-mono tracking-widest text-[#64748b] uppercase font-bold">ASSOCIATES</span>
+              </span>
             </a>
             <button onClick={() => setView("app")} className="nav-cta">
               Start Practicing →
@@ -326,7 +330,7 @@ export default function App() {
             <h1>Stop guessing.<br />Start <em>nailing</em> interviews.</h1>
 
             <p className="hero-sub">
-              InterviewIQ generates tailored interview questions for any role in seconds — so you walk in prepared, confident, and ready to impress.
+              Melo generates tailored interview questions for any role in seconds — so you walk in prepared, confident, and ready to impress.
             </p>
 
             <div className="hero-actions select-none">
@@ -431,12 +435,16 @@ export default function App() {
             <div className="wrapper mx-auto">
                 <header className="app-header">
                   <a href="#" className="logo" onClick={(e) => { e.preventDefault(); setView("landing"); }}>
-                    <span className="logo-mark">
-                      <svg viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                    <span className="logo-mark" style={{ background: 'none', border: 'none', width: 'auto', height: 'auto', display: 'flex', alignItems: 'center' }}>
+                      <svg viewBox="0 0 100 100" style={{ width: '38px', height: '38px' }} fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="42" cy="42" r="28" stroke="#9a547a" strokeWidth="8" strokeLinecap="round" />
+                        <circle cx="68" cy="68" r="18" stroke="#e27a54" strokeWidth="8" strokeLinecap="round" />
                       </svg>
                     </span>
-                    <span className="logo-text font-serif">InterviewIQ</span>
+                    <span className="logo-text flex flex-col items-start leading-tight">
+                      <span className="text-base font-serif font-bold tracking-wider text-[#1e293b]" style={{ fontFamily: "serif" }}>MELO</span>
+                      <span className="text-[8px] font-mono tracking-widest text-[#64748b] uppercase font-bold">ASSOCIATES</span>
+                    </span>
                   </a>
                   <h1 className="app-h1">Smart questions for <em>every role</em></h1>
                   <p className="subtitle">Enter a job title and get three thoughtful, role-specific interview questions in seconds.</p>
