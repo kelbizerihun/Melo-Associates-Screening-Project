@@ -391,50 +391,6 @@ export default function App() {
                 </p>
               </div>
 
-              <div className="feature-card reveal">
-                <div className="feature-icon">
-                  <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
-                </div>
-                <span className="feature-tag tag-soon">Coming soon</span>
-                <h3 className="feature-title">Answer Practice Mode</h3>
-                <p className="feature-desc">
-                  Type or speak your answer and get instant AI feedback on clarity, structure, and relevance — like having a personal interview coach available 24/7.
-                </p>
-              </div>
-
-              <div className="feature-card reveal">
-                <div className="feature-icon">
-                  <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
-                </div>
-                <span className="feature-tag tag-soon">Coming soon</span>
-                <h3 className="feature-title">Mock Interview Simulator</h3>
-                <p className="feature-desc">
-                  Run a full timed mock interview session. Questions are served one by one, simulating real interview pressure and helping you build composure under time constraints.
-                </p>
-              </div>
-
-              <div className="feature-card reveal">
-                <div className="feature-icon">
-                  <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
-                </div>
-                <span className="feature-tag tag-soon">Coming soon</span>
-                <h3 className="feature-title">STAR Method Coach</h3>
-                <p className="feature-desc">
-                  Learn to structure answers using the Situation–Task–Action–Result framework. The AI guides you through each component so your stories land with maximum impact.
-                </p>
-              </div>
-
-              <div className="feature-card reveal">
-                <div className="feature-icon">
-                  <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
-                </div>
-                <span className="feature-tag tag-soon">Coming soon</span>
-                <h3 className="feature-title">Session History & Export</h3>
-                <p className="feature-desc">
-                  Save your practice sessions, revisit questions you found tricky, and export your personal question bank as a PDF to review before the big day.
-                </p>
-              </div>
-
             </div>
           </section>
 
