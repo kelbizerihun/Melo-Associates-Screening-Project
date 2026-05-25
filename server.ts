@@ -23,7 +23,7 @@ function getGeminiClient(): GoogleGenAI {
       apiKey,
       httpOptions: {
         headers: {
-          "User-Agent": "melo-associates-client",
+          "User-Agent": "talentflow-client",
         },
       },
     });

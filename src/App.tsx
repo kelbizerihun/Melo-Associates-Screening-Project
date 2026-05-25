@@ -307,13 +307,14 @@ export default function App() {
             <a href="#" className="nav-logo" onClick={(e) => { e.preventDefault(); setView("landing"); }}>
               <span className="nav-logo-mark" style={{ background: 'none', border: 'none', width: 'auto', height: 'auto', display: 'flex', alignItems: 'center' }}>
                 <svg viewBox="0 0 100 100" style={{ width: '32px', height: '32px' }} fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="42" cy="42" r="28" stroke="#9a547a" strokeWidth="8" strokeLinecap="round" />
-                  <circle cx="68" cy="68" r="18" stroke="#e27a54" strokeWidth="8" strokeLinecap="round" />
+                  <circle cx="38" cy="50" r="22" stroke="#c9440b" strokeWidth="8" />
+                  <circle cx="62" cy="50" r="22" stroke="#1e293b" strokeWidth="8" />
+                  <path d="M38 50H62" stroke="#c9440b" strokeWidth="8" strokeLinecap="round" />
                 </svg>
               </span>
               <span className="nav-logo-text flex flex-col items-start leading-tight">
-                <span className="text-sm font-serif font-bold tracking-wider text-[#1e293b]" style={{ fontFamily: "serif" }}>MELO</span>
-                <span className="text-[7px] font-mono tracking-widest text-[#64748b] uppercase font-bold">ASSOCIATES</span>
+                <span className="text-sm font-sans font-extrabold tracking-wider text-[#1e293b]">TALENTFLOW</span>
+                <span className="text-[7px] font-mono tracking-widest text-[#64748b] uppercase font-bold">PREP SUITE</span>
               </span>
             </a>
             <button onClick={() => setView("app")} className="nav-cta">
@@ -330,7 +331,7 @@ export default function App() {
             <h1>Stop guessing.<br />Start <em>nailing</em> interviews.</h1>
 
             <p className="hero-sub">
-              Melo generates tailored interview questions for any role in seconds — so you walk in prepared, confident, and ready to impress.
+              TalentFlow generates tailored interview questions for any role in seconds — so you walk in prepared, confident, and ready to impress.
             </p>
 
             <div className="hero-actions select-none">
@@ -411,7 +412,7 @@ export default function App() {
           </div>
 
           <footer className="select-none font-sans text-xs text-[#6b6560]/70 py-10 text-center border-t border-[#d6cfc6]/50">
-            Built for the Melo Associates technical screen
+            Powered by the TalentFlow interview generation engine
           </footer>
         </div>
       ) : (
@@ -437,13 +438,14 @@ export default function App() {
                   <a href="#" className="logo" onClick={(e) => { e.preventDefault(); setView("landing"); }}>
                     <span className="logo-mark" style={{ background: 'none', border: 'none', width: 'auto', height: 'auto', display: 'flex', alignItems: 'center' }}>
                       <svg viewBox="0 0 100 100" style={{ width: '38px', height: '38px' }} fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="42" cy="42" r="28" stroke="#9a547a" strokeWidth="8" strokeLinecap="round" />
-                        <circle cx="68" cy="68" r="18" stroke="#e27a54" strokeWidth="8" strokeLinecap="round" />
+                        <circle cx="38" cy="50" r="22" stroke="#c9440b" strokeWidth="8" />
+                        <circle cx="62" cy="50" r="22" stroke="#1e293b" strokeWidth="8" />
+                        <path d="M38 50H62" stroke="#c9440b" strokeWidth="8" strokeLinecap="round" />
                       </svg>
                     </span>
                     <span className="logo-text flex flex-col items-start leading-tight">
-                      <span className="text-base font-serif font-bold tracking-wider text-[#1e293b]" style={{ fontFamily: "serif" }}>MELO</span>
-                      <span className="text-[8px] font-mono tracking-widest text-[#64748b] uppercase font-bold">ASSOCIATES</span>
+                      <span className="text-base font-sans font-extrabold tracking-wider text-[#1e293b]">TALENTFLOW</span>
+                      <span className="text-[8px] font-mono tracking-widest text-[#64748b] uppercase font-bold">PREP SUITE</span>
                     </span>
                   </a>
                   <h1 className="app-h1">Smart questions for <em>every role</em></h1>
@@ -544,7 +546,7 @@ export default function App() {
                   </div>
                 )}
 
-                <footer className="app-footer select-none">Built for the Melo Associates technical screen</footer>
+                <footer className="app-footer select-none">Powered by the TalentFlow interview generation engine</footer>
               </div>
 
             </div>
