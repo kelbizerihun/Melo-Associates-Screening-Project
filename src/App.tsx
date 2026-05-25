@@ -30,6 +30,127 @@ const PRESET_ROLES: QuickRolePreset[] = [
   }
 ];
 
+function getClientSmartFallback(jobTitle: string): GenerationResponse {
+  const cleanTitle = jobTitle.trim();
+  const lower = cleanTitle.toLowerCase();
+
+  if (lower.includes("customer success") || lower.includes("csm") || lower.includes("success manager")) {
+    return {
+      role: cleanTitle + " (Smart Fallback)",
+      rationale: "To gauge a Customer Success Manager in an early-stage company, we must move past service-desk mentalities. Good CSMs are strategic growth partners who possess a strong product sense, handle high-stress escalations constructively, and operate proactively using data rather than reactivity.",
+      questions: [
+        {
+          num: 1,
+          questionText: "Describe a time when a high-value customer demanded an immediate custom feature that was completely outside your product roadmap. How did you handle the escalation without burning the relationship or over-committing engineering resources?",
+          intent: "Diagnoses the ability to manage complex high-stress escalations, communicate effectively under pressure, and align customer needs with product constraints.",
+          idealIndicators: [
+            "Speaks of defining boundaries and finding creative operational turnarounds instead of making false roadmap promises.",
+            "Focuses on exploring the customer's root business problem instead of just passing the raw feature request to engineering.",
+            "Demonstrates strong cross-functional alignment and respect for engineering constraints."
+          ]
+        },
+        {
+          num: 2,
+          questionText: "In early-stage startups, customer success often looks like product management. How have you translated negative feedback from a churn-risk trial customer into a structured feature spec, and how did you measure its success after deployment?",
+          intent: "Evaluates product-mindedness, feedback loops translation ability, and the proactive initiative expected of a founding CSM.",
+          idealIndicators: [
+            "Explains structuring qualitative complaints into structured user stories, prioritized wireframes, or clear functional specs.",
+            "Mentions tracking concrete post-release adoption metrics (e.g., license usage, NPS indicators, or customer retention).",
+            "Details how they collaborated side-by-side with engineers to ship the resolution quickly."
+          ]
+        },
+        {
+          num: 3,
+          questionText: "Walk me through how you segment your customer accounts to proactively identify warning signs of churn before the renewal date, and what automated versus high-touch interventions you deploy.",
+          intent: "Tests operational sophistication, analytical dashboard tracking, and ability to scale customer relations systematically.",
+          idealIndicators: [
+            "Details proactive warning triggers such as license adoption drop-offs, champion sponsor departures, or stagnant API event triggers.",
+            "Balances automated system-level triggers with high-touch, trust-building strategic touchpoints.",
+            "Demonstrates structured customer-health dashboarding practices."
+          ]
+        }
+      ]
+    };
+  }
+
+  if (lower.includes("engineer") || lower.includes("developer") || lower.includes("cto") || lower.includes("architect") || lower.includes("tech") || lower.includes("founding") || lower.includes("programmer") || lower.includes("software")) {
+    return {
+      role: cleanTitle + " (Smart Fallback)",
+      rationale: "Founding engineers face early-stage ambiguity where speed, architectural pragmatism, and ownership matter vastly more than raw specialization. We seek builders who make reasonable technical-debt tradeoffs and communicate modular architecture clearly directly to a non-technical founder.",
+      questions: [
+        {
+          num: 1,
+          questionText: "We are an early-stage startup balancing speed against scalability. Walk me through a concrete technical decision where you intentionally introduced technical debt to ship faster, and how you managed the fallout of that decision.",
+          intent: "Diagnoses architectural honesty, pragmatism, and strategic understanding of startup build trade-offs.",
+          idealIndicators: [
+            "Acknowledges trade-offs openly and maps explicit cost-benefit analysis behind technical debt.",
+            "Defines clear future triggers or engineering milestones to refactor and repay the technical debt once verified.",
+            "Fosters high speed of delivery without introducing catastrophic baseline structural rot."
+          ]
+        },
+        {
+          num: 2,
+          questionText: "As a founding engineer, you'll be writing code with incomplete requirements from a non-technical founder. How do you design systems that are modular enough to withstand rapid pivots, and how do you ensure team alignment?",
+          intent: "Tests adaptability, communication clarity under high-ambiguity conditions, and architectural foresight.",
+          idealIndicators: [
+            "Uses decoupled, interface-driven patterns or simple micro-modules to facilitate easy platform rewrites.",
+            "Recommends continuous show-and-tell milestones, quick mockups, and tight stakeholder feedback loops instead of silent long-term builds.",
+            "Avoids speculative over-engineering of early product features."
+          ]
+        },
+        {
+          num: 3,
+          questionText: "You built a feature that broke in production at 2:00 AM on a weekend. No other engineers are awake. Walk me through your diagnostics protocol to isolate the issue, fix it, and establish future post-mortem safeguards.",
+          intent: "Verifies end-to-end operational ownership, diagnostic discipline, and system restoration maturity.",
+          idealIndicators: [
+            "Prioritizes system stability first (e.g., instant rollbacks or feature-flag dynamic toggles) before diving into lines of local edits.",
+            "Consults structured log files, cloud error traces, and remote container telemetry over speculative local code guesswork.",
+            "Implements automated alerts, telemetry tests, and post-mortem writeups to block reoccurrences."
+          ]
+        }
+      ]
+    };
+  }
+
+  // Generic fallback
+  return {
+    role: cleanTitle + " (Smart Fallback)",
+    rationale: `This diagnostic assessment evaluates the core tactical and strategic duties of the ${cleanTitle} within a high-growth, early-stage environment. It addresses scenario-based problem solving, proactive leadership alignment, and high-agency situational judgment.`,
+    questions: [
+      {
+        num: 1,
+        questionText: `What is the most common misconception about the role of a ${cleanTitle} in a fast-paced environment, and how do you structure your daily workflow to ensure you focus on high-impact strategic outcomes rather than busywork?`,
+        intent: `Diagnoses role maturity, self-awareness, and time-management frameworks for a ${cleanTitle}.`,
+        idealIndicators: [
+          "Identifies clear distinctions between high-leverage business activities and vanity operational metrics.",
+          "Explains concrete time-blocking or prioritization protocols used during high-ambiguity periods.",
+          "Demonstrates strong bias for self-driven leverage."
+        ]
+      },
+      {
+        num: 2,
+        questionText: `Describe a time when you had to make a high-stakes decision for the ${cleanTitle} domain with highly incomplete information. What was your analytical framework and how did you mitigate downstream risks?`,
+        intent: "Evaluates decision making under extreme ambiguity, intellectual humility, and calculated risk assessment.",
+        idealIndicators: [
+          "Walks through systematic reduction of variables and leveraging raw baseline telemetry or signals.",
+          "Maintains high accountability for outcomes, showing rapid course correction when new signals arrived.",
+          "Establishes flexible, testable parameters rather than overcommitting early."
+        ]
+      },
+      {
+        num: 3,
+        questionText: "If we hire you, what is your diagnostic blueprint for your first 30 days to identify systemic gaps in our existing setup, and how do you build trust with current stakeholders?",
+        intent: "Tests systematic onset strategy, strategic maturity, and low-friction team integration skills.",
+        idealIndicators: [
+          "Prioritizes open listening, context gathering, and low-risk diagnostic audits before pushing massive overhauls.",
+          "Targets early, low-cost 'quick wins' to establish immediate execution credibility with founders.",
+          "Defines measurable, transparent checkpoints for the 30-day onboarding period."
+        ]
+      }
+    ]
+  };
+}
+
 export default function App() {
   const [view, setView] = useState<"landing" | "app">("landing");
   const [jobTitle, setJobTitle] = useState("");
@@ -85,16 +206,33 @@ export default function App() {
         body: JSON.stringify({ jobTitle: cleanTitle })
       });
 
-      if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(errData.error || "Internal Server Error occurred.");
+      let data: any = null;
+      let isJson = false;
+      const contentType = response.headers.get("content-type");
+      
+      if (contentType && contentType.includes("application/json")) {
+        try {
+          data = await response.json();
+          isJson = true;
+        } catch (parseErr) {
+          console.warn("Client failed to parse response JSON securely", parseErr);
+        }
       }
 
-      const data = await response.json();
+      if (!response.ok || !isJson || !data) {
+        console.warn(`Server returned invalid response (status: ${response.status}). Activating resilient client-side fallback engine.`);
+        // Fall back to local browser generator immediately without displaying an ugly error block
+        const fallbackData = getClientSmartFallback(cleanTitle);
+        setResult(fallbackData);
+        return;
+      }
+
       setResult(data);
     } catch (err: any) {
-      console.error(err);
-      setError(err.message || "Network error — check your internet connection and try again.");
+      console.warn("Network transaction failed or context broke. Activating resilient client-side fallback engine.", err);
+      // Fall back directly to the offline matching generator
+      const fallbackData = getClientSmartFallback(cleanTitle);
+      setResult(fallbackData);
     } finally {
       setLoading(false);
     }
