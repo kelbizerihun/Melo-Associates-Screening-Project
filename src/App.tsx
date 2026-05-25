@@ -425,7 +425,7 @@ export default function App() {
               className="hover:text-[#0d0d0d] font-bold flex items-center gap-1"
               id="back-home-button"
             >
-              <span>← Go to Landing Page</span>
+              <span>← Back to Home</span>
             </button>
           </div>
 
@@ -478,29 +478,7 @@ export default function App() {
                     </div>
                   </form>
 
-                  {/* Aesthetic Recruiter Cheat Shortcut Presets (Extremely clean, respects the minimalist aesthetic) */}
-                  <div className="pt-5 border-t border-[#d6cfc6]/40 mt-5 space-y-2 select-none">
-                    <span className="block text-[10px] font-bold tracking-wider text-[#6b6560] uppercase">
-                      Quick Preset Job titles
-                    </span>
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {PRESET_ROLES.map((pt, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => handlePresetSelect(pt.title)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
-                            jobTitle.toLowerCase() === pt.title.toLowerCase()
-                              ? "bg-[#c9440b] text-white border-[#c9440b] shadow-xs"
-                              : "bg-[#f5f1ea]/55 border-[#d6cfc6] text-[#6b6560] hover:text-[#0d0d0d] hover:border-[#c9440b]"
-                          }`}
-                          id={`preset-button-${idx}`}
-                        >
-                          <span>{pt.title}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+
                 </div>
 
                 {/* Cloned Error message block */}
@@ -544,78 +522,18 @@ export default function App() {
                     {/* Cloned Question items list */}
                     <div className="question-list">
                       {result.questions.map((q, idx) => {
-                        const isExpanded = expandedCardIdx === idx;
                         return (
                           <div 
                             key={idx} 
-                            className="question-card flex flex-col bg-white hover:border-[#c9440b] transition-all cursor-pointer relative"
-                            onClick={() => toggleExpandInsight(idx)}
+                            className="question-card flex flex-col bg-white border border-[#d6cfc6]/40 p-5 rounded-xl transition-all relative select-text"
                             id={`card-item-${idx}`}
                           >
-                            <div className="select-text">
-                              <div className="flex items-center justify-between select-none">
-                                <span className="q-num">Question {idx + 1}</span>
-                                <span className="text-[10px] font-bold text-[#6b6560] uppercase tracking-wider flex items-center gap-1">
-                                  {isExpanded ? "Hide Strategic Guide ▲" : "Click to view Answer Checklist ▼"}
-                                </span>
-                              </div>
-                              <h3 className="q-text select-all font-sans font-medium text-[#0d0d0d]">
+                            <div className="flex flex-col gap-2">
+                              <span className="q-num select-none">Question {idx + 1}</span>
+                              <h3 className="q-text select-all font-sans font-medium text-[#0d0d0d] text-[15px] leading-relaxed">
                                 "{q.questionText}"
                               </h3>
                             </div>
-
-                            {/* COLLAPSIBLE PREMIUM RECRUITING CHEATSHEET & DIAGNOSTICS */}
-                            {isExpanded && (
-                              <div 
-                                className="mt-4 pt-4 border-t border-[#d6cfc6]/50 grid grid-cols-1 md:grid-cols-2 gap-4 select-text animate-fade-in"
-                                onClick={(e) => e.stopPropagation()} // Stop propagation so clicking content doesn't fold it
-                              >
-                                {/* Intent / Why We Ask */}
-                                <div className="space-y-1">
-                                  <span className="text-[10px] font-mono font-bold uppercase text-[#6b6560] flex items-center gap-1.5 select-none">
-                                    <Info className="w-3.5 h-3.5 text-[#c9440b]" />
-                                    Diagnostic Objective
-                                  </span>
-                                  <p className="text-[11.5px] text-[#6b6560] leading-relaxed">
-                                    {q.intent}
-                                  </p>
-                                </div>
-
-                                {/* Look and Listen for triggers */}
-                                <div className="space-y-1">
-                                  <span className="text-[10px] font-mono font-bold uppercase text-[#6b6560] flex items-center gap-1.5 select-none">
-                                    <Award className="w-3.5 h-3.5 text-[#c9440b]" />
-                                    Success Indicators (Check to test)
-                                  </span>
-                                  <div className="space-y-1.5 pt-1.5 select-none">
-                                    {q.idealIndicators.map((ind, indIdx) => {
-                                      const key = `${q.num}-${indIdx}`;
-                                      const isChecked = checkedIdList.includes(key);
-                                      return (
-                                        <div
-                                          key={indIdx}
-                                          onClick={() => toggleIndicatorCheckbox(q.num, indIdx)}
-                                          className={`flex items-start gap-2.5 p-1.5 rounded border transition-all text-left ${
-                                            isChecked 
-                                              ? "bg-[#f0e6df] text-[#c9440b] border-[#c9440b]/20" 
-                                              : "hover:bg-[#f5f1ea]/50 border-transparent bg-white/40 text-[#6b6560]"
-                                          }`}
-                                        >
-                                          <div className={`mt-0.5 h-3.5 w-3.5 rounded border shrink-0 flex items-center justify-center transition-all ${
-                                            isChecked ? "bg-[#c9440b] border-[#c9440b] text-white" : "border-[#d6cfc6] bg-white"
-                                          }`}>
-                                            {isChecked && <Check className="w-2 h-2 text-white font-bold" />}
-                                          </div>
-                                          <span className="text-[10px] font-medium leading-tight select-text">
-                                            {ind}
-                                          </span>
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              </div>
-                            )}
                           </div>
                         );
                       })}
