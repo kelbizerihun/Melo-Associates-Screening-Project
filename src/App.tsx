@@ -657,33 +657,7 @@ export default function App() {
                       })}
                     </div>
 
-                    {/* Strategic Rationale, Directive & Download toolkit panel */}
-                    <div className="bg-[#0d0d0d] text-[#f5f1ea] rounded-xl border border-[#d6cfc6]/20 p-6 mt-6 select-text flex flex-col gap-4">
-                      
-                      <div className="border-b border-[#d6cfc6]/15 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 select-none">
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <Sparkles className="w-3.5 h-3.5 text-[#c9440b]" />
-                            <span className="text-[9px] font-mono tracking-widest text-[#d6cfc6] font-semibold uppercase">EXECUTIVE CPO ASSESSMENT SUMMARY</span>
-                          </div>
-                          <h4 className="font-serif italic text-base text-[#f5f1ea] mt-1">Diagnostic Framework Directive</h4>
-                        </div>
-                        <button
-                          onClick={downloadPrepGuide}
-                          className="px-3 py-1.5 bg-[#c9440b] hover:bg-[#a83609] text-white font-bold text-xs rounded transition-colors inline-flex items-center gap-1.5 select-none cursor-pointer"
-                          id="app-download-button"
-                        >
-                          <Download className="w-3.5 h-3.5" />
-                          <span>Download TXT Packet</span>
-                        </button>
-                      </div>
 
-                      <div className="space-y-1">
-                        <span className="block text-[9px] font-mono tracking-wider font-semibold text-[#6b6560] uppercase select-none">Evaluation Context Background</span>
-                        <p className="text-xs text-[#d6cfc6]/90 leading-relaxed font-sans">{result.rationale}</p>
-                      </div>
-
-                    </div>
 
                   </div>
                 )}
