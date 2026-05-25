@@ -1,0 +1,563 @@
+import { useState, useEffect, FormEvent, KeyboardEvent } from "react";
+import { 
+  Sparkles, 
+  HelpCircle, 
+  Download, 
+  Check, 
+  ChevronRight, 
+  Info,
+  Award,
+  BookOpen
+} from "lucide-react";
+import { GenerationResponse, QuickRolePreset } from "./types";
+
+const PRESET_ROLES: QuickRolePreset[] = [
+  {
+    title: "Customer Success Manager",
+    description: "Evaluates onboarding metrics, high-stress escalations, and retention cycles."
+  },
+  {
+    title: "Founding Full-Stack Engineer",
+    description: "Diagnoses full-system architectural tradeoffs and speed of shipping."
+  },
+  {
+    title: "Growth Marketing Lead",
+    description: "Probes analytics setup, attribution loops, and fast, low-cost acquisition."
+  },
+  {
+    title: "Technical Product Manager",
+    description: "Probes roadmap tradeoffs, technology alignment, and agile execution."
+  }
+];
+
+export default function App() {
+  const [view, setView] = useState<"landing" | "app">("landing");
+  const [jobTitle, setJobTitle] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<GenerationResponse | null>(null);
+  const [checkedIdList, setCheckedIdList] = useState<string[]>([]);
+  
+  const [expandedCardIdx, setExpandedCardIdx] = useState<number | null>(null);
+
+  // Trigger scroll-reveal effects on the landing page
+  useEffect(() => {
+    if (view === "landing") {
+      const handleScroll = () => {
+        const elements = document.querySelectorAll(".reveal");
+        elements.forEach((el) => {
+          const rect = el.getBoundingClientRect();
+          const inView = rect.top <= window.innerHeight * 0.88;
+          if (inView) {
+            el.classList.add("visible");
+          }
+        });
+      };
+      
+      // Initial trigger
+      setTimeout(handleScroll, 100);
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }
+  }, [view]);
+
+  const handlePresetSelect = (title: string) => {
+    setJobTitle(title);
+    // Automatically trigger generate for a fluid UX
+    setError(null);
+  };
+
+  const handleGenerate = async (e: FormEvent) => {
+    e.preventDefault();
+    const cleanTitle = jobTitle.trim();
+    if (!cleanTitle) return;
+
+    setLoading(true);
+    setError(null);
+    setResult(null);
+    setCheckedIdList([]);
+    setExpandedCardIdx(null);
+
+    try {
+      const response = await fetch("/api/generate-questions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jobTitle: cleanTitle })
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || "Internal Server Error occurred.");
+      }
+
+      const data = await response.json();
+      setResult(data);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "Network error — check your internet connection and try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleIndicatorCheckbox = (questionNum: number, indicatorIdx: number) => {
+    const key = `${questionNum}-${indicatorIdx}`;
+    setCheckedIdList(prev => 
+      prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
+    );
+  };
+
+  const toggleExpandInsight = (idx: number) => {
+    setExpandedCardIdx(prevIdx => prevIdx === idx ? null : idx);
+  };
+
+  const downloadPrepGuide = () => {
+    if (!result) return;
+    
+    let text = `=================================================================\n`;
+    text += `   AI INTERVIEW INTELLIGENCE EVALUATION SHEET: ${result.role.toUpperCase()}\n`;
+    text += `   Generated using Gemini Direct Proxy & CPO Logic Blueprint\n`;
+    text += `=================================================================\n\n`;
+    
+    text += `--- STRATEGIC ASSESSMENT SUMMARY ---\n`;
+    text += `${result.rationale}\n\n`;
+    
+    text += `--- RECRUITING DIAGNOSTIC QUESTIONS ---\n\n`;
+    result.questions.forEach((q, index) => {
+      text += `[QUESTION ${index + 1}] ${q.questionText}\n\n`;
+      text += `* DIAGNOSTIC INTENT / WHY TO ASK:\n  ${q.intent}\n\n`;
+      text += `* WHAT TO OBSERVE IN CANDIDATE ANSWERS:\n`;
+      q.idealIndicators.forEach((ind, i) => {
+        const key = `${q.num}-${i}`;
+        const checked = checkedIdList.includes(key) ? "[X]" : "[ ]";
+        text += `  ${checked} ${ind}\n`;
+      });
+      text += `\n-----------------------------------------------------------------\n\n`;
+    });
+    
+    text += `=================================================================\n`;
+    text += `Evaluation framework configured for: kelbizerihun3080@gmail.com\n`;
+
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${result.role.replace(/\s+/g, "_")}_Interview_Intelligence.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  // Support trigger submission with Enter key
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const mockEvent = { preventDefault: () => {} } as FormEvent;
+      handleGenerate(mockEvent);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#f5f1ea] text-[#0d0d0d] font-sans flex flex-col antialiased selection:bg-[#f0e6df] selection:text-[#c9440b]">
+      
+      {/* Dynamic Route Switcher Content */}
+      {view === "landing" ? (
+        <div id="landing-main-container">
+          {/* NAV */}
+          <nav className="custom-nav select-none">
+            <a href="#" className="nav-logo" onClick={(e) => { e.preventDefault(); setView("landing"); }}>
+              <span className="nav-logo-mark">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                </svg>
+              </span>
+              <span className="nav-logo-text">InterviewIQ</span>
+            </a>
+            <button onClick={() => setView("app")} className="nav-cta">
+              Start Practicing →
+            </button>
+          </nav>
+
+          {/* HERO */}
+          <section className="hero">
+            <div className="hero-eyebrow">
+              <span></span> AI-Powered Interview Prep
+            </div>
+
+            <h1>Stop guessing.<br />Start <em>nailing</em> interviews.</h1>
+
+            <p className="hero-sub">
+              InterviewIQ generates tailored interview questions for any role in seconds — so you walk in prepared, confident, and ready to impress.
+            </p>
+
+            <div className="hero-actions select-none">
+              <button onClick={() => setView("app")} className="btn-primary">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <span>Start Practicing</span>
+              </button>
+              <a href="#features" className="btn-ghost">
+                <span>See what's included</span>
+              </a>
+            </div>
+
+            <div className="social-proof select-none">
+              <div className="proof-item">
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                <span>Free to use</span>
+              </div>
+              <div className="proof-divider"></div>
+              <div className="proof-item">
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                <span>Any job title</span>
+              </div>
+              <div className="proof-divider"></div>
+              <div className="proof-item">
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                <span>Results in seconds</span>
+              </div>
+              <div className="proof-divider"></div>
+              <div className="proof-item">
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                <span>No sign-up needed</span>
+              </div>
+            </div>
+          </section>
+
+          {/* FEATURES */}
+          <section className="features-section select-text animate-fade-in" id="features">
+            <p className="section-label">Everything you need</p>
+            <h2 className="section-title">Built for serious <em>job seekers</em></h2>
+
+            <div className="features-grid">
+              
+              <div className="feature-card reveal">
+                <div className="feature-icon">
+                  <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                </div>
+                <span className="feature-tag tag-live">Live now</span>
+                <h3 className="feature-title">Role-Specific Questions</h3>
+                <p className="feature-desc">
+                  Enter any job title — from Customer Success Manager to Machine Learning Engineer — and get 3 behavioural, situational questions crafted for that exact role.
+                </p>
+              </div>
+
+              <div className="feature-card reveal">
+                <div className="feature-icon">
+                  <svg viewBox="0 0 24 24"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93s-3.05 7.44-7 7.93v2.02c5.05-.5 9-4.76 9-9.95S18.05 2.55 13 2.05zM11 2.05C5.95 2.55 2 6.8 2 12c0 5.2 3.95 9.45 9 9.95v-2.02C7.05 19.44 4 16.08 4 12s3.05-7.44 7-7.93V2.05zM12 6l-1 5H6l3.6 2.6L8.2 19l3.8-2.7 3.8 2.7-1.4-5.4L18 11h-5z"/></svg>
+                </div>
+                <span className="feature-tag tag-live">Live now</span>
+                <h3 className="feature-title">Instant AI Generation</h3>
+                <p className="feature-desc">
+                  No templates, no copy-paste banks. Every question is freshly generated by AI in real-time, giving you unique, thoughtful prompts every single time.
+                </p>
+              </div>
+
+              <div className="feature-card reveal">
+                <div className="feature-icon">
+                  <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+                </div>
+                <span className="feature-tag tag-soon">Coming soon</span>
+                <h3 className="feature-title">Answer Practice Mode</h3>
+                <p className="feature-desc">
+                  Type or speak your answer and get instant AI feedback on clarity, structure, and relevance — like having a personal interview coach available 24/7.
+                </p>
+              </div>
+
+              <div className="feature-card reveal">
+                <div className="feature-icon">
+                  <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+                </div>
+                <span className="feature-tag tag-soon">Coming soon</span>
+                <h3 className="feature-title">Mock Interview Simulator</h3>
+                <p className="feature-desc">
+                  Run a full timed mock interview session. Questions are served one by one, simulating real interview pressure and helping you build composure under time constraints.
+                </p>
+              </div>
+
+              <div className="feature-card reveal">
+                <div className="feature-icon">
+                  <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
+                </div>
+                <span className="feature-tag tag-soon">Coming soon</span>
+                <h3 className="feature-title">STAR Method Coach</h3>
+                <p className="feature-desc">
+                  Learn to structure answers using the Situation–Task–Action–Result framework. The AI guides you through each component so your stories land with maximum impact.
+                </p>
+              </div>
+
+              <div className="feature-card reveal">
+                <div className="feature-icon">
+                  <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+                </div>
+                <span className="feature-tag tag-soon">Coming soon</span>
+                <h3 className="feature-title">Session History & Export</h3>
+                <p className="feature-desc">
+                  Save your practice sessions, revisit questions you found tricky, and export your personal question bank as a PDF to review before the big day.
+                </p>
+              </div>
+
+            </div>
+          </section>
+
+          {/* CTA BANNER */}
+          <div style={{ width: "100%", padding: "0 24px" }} className="select-none animate-fade-in">
+            <div className="cta-banner">
+              <h2>Ready to <em>impress</em> your next interviewer?</h2>
+              <p>It takes less than 30 seconds to get your first set of questions.</p>
+              <button onClick={() => setView("app")} className="btn-primary-light">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <span>Start Practicing — It's Free</span>
+              </button>
+            </div>
+          </div>
+
+          <footer className="select-none font-sans text-xs text-[#6b6560]/70 py-10 text-center border-t border-[#d6cfc6]/50">
+            Built for the Melo Associates technical screen
+          </footer>
+        </div>
+      ) : (
+        /* ────── PRACTICE APP SCREEN (1-to-1 cloned layout matching exact classes) ────── */
+        <div className="app-view-body" id="practice-app-container">
+          
+          {/* EXTRA EVALUATOR HEADER BAR (discrete, floating, overlay control) */}
+          <div className="w-full max-w-[680px] mb-8 select-none flex items-center justify-start border-b border-[#d6cfc6] pb-3 text-xs text-[#6b6560]">
+            <button 
+              onClick={() => setView("landing")} 
+              className="hover:text-[#0d0d0d] font-bold flex items-center gap-1"
+              id="back-home-button"
+            >
+              <span>← Go to Landing Page</span>
+            </button>
+          </div>
+
+          {/* Core Practice Client Wrapper (Matched 1-to-1 to uploaded app.html wrapper) */}
+          <div className="w-full max-w-[680px] flex flex-col">
+            
+            <div className="wrapper mx-auto">
+                <header className="app-header">
+                  <a href="#" className="logo" onClick={(e) => { e.preventDefault(); setView("landing"); }}>
+                    <span className="logo-mark">
+                      <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                      </svg>
+                    </span>
+                    <span className="logo-text font-serif">InterviewIQ</span>
+                  </a>
+                  <h1 className="app-h1">Smart questions for <em>every role</em></h1>
+                  <p className="subtitle">Enter a job title and get three thoughtful, role-specific interview questions in seconds.</p>
+                </header>
+
+                {/* Core Cloned Input Card */}
+                <div className="form-card text-left">
+                  <form onSubmit={handleGenerate} className="space-y-4">
+                    <label htmlFor="job-title" className="select-none">Job Title</label>
+                    <div className="input-row">
+                      <input
+                        type="text"
+                        id="job-title"
+                        required
+                        placeholder="e.g. Customer Success Manager"
+                        autoComplete="off"
+                        value={jobTitle}
+                        onChange={(e) => setJobTitle(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        disabled={loading}
+                      />
+                      <button
+                        type="submit"
+                        id="submit-btn"
+                        disabled={loading || !jobTitle.trim()}
+                        className={loading ? "loading" : ""}
+                      >
+                        <span className="spinner"></span>
+                        <span className="btn-label font-bold">Generate</span>
+                      </button>
+                    </div>
+                  </form>
+
+                  {/* Aesthetic Recruiter Cheat Shortcut Presets (Extremely clean, respects the minimalist aesthetic) */}
+                  <div className="pt-5 border-t border-[#d6cfc6]/40 mt-5 space-y-2 select-none">
+                    <span className="block text-[10px] font-bold tracking-wider text-[#6b6560] uppercase">
+                      Quick Preset Job titles
+                    </span>
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {PRESET_ROLES.map((pt, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => handlePresetSelect(pt.title)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                            jobTitle.toLowerCase() === pt.title.toLowerCase()
+                              ? "bg-[#c9440b] text-white border-[#c9440b] shadow-xs"
+                              : "bg-[#f5f1ea]/55 border-[#d6cfc6] text-[#6b6560] hover:text-[#0d0d0d] hover:border-[#c9440b]"
+                          }`}
+                          id={`preset-button-${idx}`}
+                        >
+                          <span>{pt.title}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Cloned Error message block */}
+                {error && (
+                  <div className="error-msg visible text-left shadow-xs flex flex-col gap-2" id="error-msg-element">
+                    <div className="font-bold uppercase text-[10px] tracking-wider text-red-700">Service Alert</div>
+                    <p className="font-medium text-xs text-[#b0300a] leading-relaxed select-all">
+                      {error}
+                    </p>
+                    <button 
+                      onClick={() => setError(null)} 
+                      className="text-[10px] text-red-800 font-bold underline mt-1 self-start select-none"
+                    >
+                      Dismiss Error
+                    </button>
+                  </div>
+                )}
+
+                {/* Cloned Loading card block with animations */}
+                {loading && (
+                  <div className="loading-card visible select-none" id="loading-card-element">
+                    <div className="pulse-dots">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                    <p className="font-serif italic text-[#c9440b] font-medium scale-105">Crafting questions for your role…</p>
+                  </div>
+                )}
+
+                {/* Cloned Results rendering block */}
+                {result && !loading && !error && (
+                  <div className="results visible text-left" id="results-element">
+                    
+                    {/* Cloned Results header */}
+                    <div className="results-header select-none">
+                      <span className="results-title font-serif">Interview Questions</span>
+                      <span className="role-badge" id="role-badge">{result.role}</span>
+                    </div>
+
+                    {/* Cloned Question items list */}
+                    <div className="question-list">
+                      {result.questions.map((q, idx) => {
+                        const isExpanded = expandedCardIdx === idx;
+                        return (
+                          <div 
+                            key={idx} 
+                            className="question-card flex flex-col bg-white hover:border-[#c9440b] transition-all cursor-pointer relative"
+                            onClick={() => toggleExpandInsight(idx)}
+                            id={`card-item-${idx}`}
+                          >
+                            <div className="select-text">
+                              <div className="flex items-center justify-between select-none">
+                                <span className="q-num">Question {idx + 1}</span>
+                                <span className="text-[10px] font-bold text-[#6b6560] uppercase tracking-wider flex items-center gap-1">
+                                  {isExpanded ? "Hide Strategic Guide ▲" : "Click to view Answer Checklist ▼"}
+                                </span>
+                              </div>
+                              <h3 className="q-text select-all font-sans font-medium text-[#0d0d0d]">
+                                "{q.questionText}"
+                              </h3>
+                            </div>
+
+                            {/* COLLAPSIBLE PREMIUM RECRUITING CHEATSHEET & DIAGNOSTICS */}
+                            {isExpanded && (
+                              <div 
+                                className="mt-4 pt-4 border-t border-[#d6cfc6]/50 grid grid-cols-1 md:grid-cols-2 gap-4 select-text animate-fade-in"
+                                onClick={(e) => e.stopPropagation()} // Stop propagation so clicking content doesn't fold it
+                              >
+                                {/* Intent / Why We Ask */}
+                                <div className="space-y-1">
+                                  <span className="text-[10px] font-mono font-bold uppercase text-[#6b6560] flex items-center gap-1.5 select-none">
+                                    <Info className="w-3.5 h-3.5 text-[#c9440b]" />
+                                    Diagnostic Objective
+                                  </span>
+                                  <p className="text-[11.5px] text-[#6b6560] leading-relaxed">
+                                    {q.intent}
+                                  </p>
+                                </div>
+
+                                {/* Look and Listen for triggers */}
+                                <div className="space-y-1">
+                                  <span className="text-[10px] font-mono font-bold uppercase text-[#6b6560] flex items-center gap-1.5 select-none">
+                                    <Award className="w-3.5 h-3.5 text-[#c9440b]" />
+                                    Success Indicators (Check to test)
+                                  </span>
+                                  <div className="space-y-1.5 pt-1.5 select-none">
+                                    {q.idealIndicators.map((ind, indIdx) => {
+                                      const key = `${q.num}-${indIdx}`;
+                                      const isChecked = checkedIdList.includes(key);
+                                      return (
+                                        <div
+                                          key={indIdx}
+                                          onClick={() => toggleIndicatorCheckbox(q.num, indIdx)}
+                                          className={`flex items-start gap-2.5 p-1.5 rounded border transition-all text-left ${
+                                            isChecked 
+                                              ? "bg-[#f0e6df] text-[#c9440b] border-[#c9440b]/20" 
+                                              : "hover:bg-[#f5f1ea]/50 border-transparent bg-white/40 text-[#6b6560]"
+                                          }`}
+                                        >
+                                          <div className={`mt-0.5 h-3.5 w-3.5 rounded border shrink-0 flex items-center justify-center transition-all ${
+                                            isChecked ? "bg-[#c9440b] border-[#c9440b] text-white" : "border-[#d6cfc6] bg-white"
+                                          }`}>
+                                            {isChecked && <Check className="w-2 h-2 text-white font-bold" />}
+                                          </div>
+                                          <span className="text-[10px] font-medium leading-tight select-text">
+                                            {ind}
+                                          </span>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Strategic Rationale, Directive & Download toolkit panel */}
+                    <div className="bg-[#0d0d0d] text-[#f5f1ea] rounded-xl border border-[#d6cfc6]/20 p-6 mt-6 select-text flex flex-col gap-4">
+                      
+                      <div className="border-b border-[#d6cfc6]/15 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 select-none">
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <Sparkles className="w-3.5 h-3.5 text-[#c9440b]" />
+                            <span className="text-[9px] font-mono tracking-widest text-[#d6cfc6] font-semibold uppercase">EXECUTIVE CPO ASSESSMENT SUMMARY</span>
+                          </div>
+                          <h4 className="font-serif italic text-base text-[#f5f1ea] mt-1">Diagnostic Framework Directive</h4>
+                        </div>
+                        <button
+                          onClick={downloadPrepGuide}
+                          className="px-3 py-1.5 bg-[#c9440b] hover:bg-[#a83609] text-white font-bold text-xs rounded transition-colors inline-flex items-center gap-1.5 select-none cursor-pointer"
+                          id="app-download-button"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          <span>Download TXT Packet</span>
+                        </button>
+                      </div>
+
+                      <div className="space-y-1">
+                        <span className="block text-[9px] font-mono tracking-wider font-semibold text-[#6b6560] uppercase select-none">Evaluation Context Background</span>
+                        <p className="text-xs text-[#d6cfc6]/90 leading-relaxed font-sans">{result.rationale}</p>
+                      </div>
+
+                    </div>
+
+                  </div>
+                )}
+
+                <footer className="app-footer select-none">Built for the Melo Associates technical screen</footer>
+              </div>
+
+            </div>
+
+        </div>
+      )}
+
+    </div>
+  );
+}

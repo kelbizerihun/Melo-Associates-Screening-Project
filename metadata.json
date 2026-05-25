@@ -1,0 +1,6 @@
+{
+  "name": "AI Interview Question Generator",
+  "description": "A full-stack application built for a Technical Screen that generates thoughtful, role-specific interview questions using Gemini and showcases clean code structure, prompting strategy, and interactive walkthrough aids for the founding team.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
